@@ -150,17 +150,77 @@ class InterfaceClass(metaclass=InterfaceCheckerMetaClass):
 
 # 7 ####################################################################################
 
+
+class SingleTonMetaClass(type):
+    instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        print(cls.instances)
+        if cls not in cls.instances:
+            clsobj = super(SingleTonMetaClass, cls).__call__(*args, **kwargs)
+            cls.instances[cls] = clsobj
+        return cls.instances[cls]
+
+    # def __init__(cls, name, bases, classdict):
+    #     if name not in cls.instances:
+    #         cls.instances[name] = cls
+    #         super(SingleTonMetaClass, cls).__init__(name, bases, classdict)
+
+
 class SingleTon:
-    is_initialised = False
-    def __init__(self, cls):
-        cls.is_initialised = True
+    instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls.instance is None:
+            return super(SingleTon, cls).__new__(cls, *args, **kwargs)
+        else:
+            return SingleTon.instance
+
+    def __init__(self):
+        if SingleTon.instance is None:
+            SingleTon.instance = self
+
+
+class Dziedziczaca(SingleTon):
+    def __init__(self):
+        super(SingleTon, self).__init__(self)
+        self.k = "AKUKU"
+
+
+class Jakas(metaclass=SingleTonMetaClass):
+    def __init__(self, val):
+        self.val = val
+
+class Jakas2(metaclass=SingleTonMetaClass):
+    def __init__(self, val):
+        self.val = val
+
+
 
 if __name__ == '__main__':
     # 7
-    print(SingleTon.is_initialised)
 
-    A = SingleTon(SingleTon)
-    print(SingleTon.is_initialised)
+    # A = SingleTon()
+    # A.a = 4
+    # print(A.a)
+    # B = SingleTon()
+    # B.a = 5
+    # print(A.a)
+    # print(B.a)
+    # print(A)
+    # print(B)
+    # print(A is B)
+    # KK = Dziedziczaca()
+    # print(KK is A)
+
+    A = Jakas(7)
+    B = Jakas(8)
+    print(A.val)
+    print(B.val)
+    print(A is B)
+    C = Jakas2(10)
+    D = Jakas2(10)
+    print(C is A)
 
     # 6
     # A = InterfaceClass()
