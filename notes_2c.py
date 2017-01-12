@@ -8,7 +8,7 @@ class AutoSetterMetaclass(type):
         for attr in classdict:
             if attr.startswith("_"+name+"__"):
                 def setter(self, value, attr=attr):
-                    return setattr(self, attr, value+10)
+                    return setattr(self, attr, value)
                 settername = "set" + attr[3+len(name):]
                 setter.__name__ = settername
                 d[settername] = setter
@@ -24,12 +24,15 @@ class Nowa(metaclass=AutoSetterMetaclass):
 # 2 ####################################################################################
 
 class Property2:
-    def __init__(self, getter=None, setter=None, deleter=None):
+    def __init__(self, getter=None, setter=None, deleter=None, doc=None):
         self.getter = getter
         self.setter = setter
         self.deleter = deleter
+        self.__doc__ = doc
 
     def __get__(self, obj, objtype=None):
+        if self.getter is None:
+            pass
         return self.getter(obj)
 
     def __set__(self, obj, value):
@@ -160,11 +163,6 @@ class SingleTonMetaClass(type):
             clsobj = super(SingleTonMetaClass, cls).__call__(*args, **kwargs)
             cls.instances[cls] = clsobj
         return cls.instances[cls]
-
-    # def __init__(cls, name, bases, classdict):
-    #     if name not in cls.instances:
-    #         cls.instances[name] = cls
-    #         super(SingleTonMetaClass, cls).__init__(name, bases, classdict)
 
 
 class SingleTon:
