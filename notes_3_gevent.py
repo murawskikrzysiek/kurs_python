@@ -5,7 +5,6 @@ from queue import Queue
 from notes_3_threading import print_results
 
 def count_row(pid, mul_data, s, r):
-    # print("Starting task {}".format(pid))
     while True:
         number = s.get()
         s.task_done()
@@ -21,9 +20,7 @@ def count_row(pid, mul_data, s, r):
         for mul in mul_data:
             result = mul * number
             ret_list.append(result)
-        # print(ret_list)
         r.put(ret_list)
-
 
 
 if __name__ == '__main__':
